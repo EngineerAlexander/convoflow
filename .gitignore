@@ -1,3 +1,10 @@
+# Project folders and files
+neo4j_data/
+postgres_data/
+
+graph_visualization.html
+temp_input.wav
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
