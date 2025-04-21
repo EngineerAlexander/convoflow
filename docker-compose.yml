@@ -1,0 +1,34 @@
+services:
+  neo4j:
+    image: neo4j:5.19.0
+    container_name: convoflow_neo4j_local_db
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4j_data:/data # Persist data in local ./neo4j_data
+      # Mount other volumes if needed, e.g., logs, import, plugins
+      # - ./neo4j_data/logs:/logs
+      # - ./neo4j_data/import:/var/lib/neo4j/import
+      # - ./neo4j_data/plugins:/plugins
+    environment:
+      # Set authentication. Use the password 'password' for user 'neo4j'
+      NEO4J_AUTH: neo4j/myNeoPass
+
+  postgres:
+    image: postgres:16
+    container_name: convoflow_postgres_local_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data # Persist data in local ./postgres_data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sqlpassword
+
+volumes:
+  neo4j_data: {}
+  postgres_data: {} 

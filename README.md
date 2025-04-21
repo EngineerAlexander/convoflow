@@ -152,16 +152,11 @@ Tests include:
 - **Vocoder**: `microsoft/speecht5_hifigan`
 - **Speaker Embeddings**: `Matthijs/cmu-arctic-xvectors`
 
----
-
-## License
-
-MIT License
-
----
-
 ## Author
 
 Developed by Bijan Ardalan — an AI-first IVR framework for voice-driven applications and conversational automation.
 
 ConvoFlow supports both **terminal-based interaction** and **real-time audio interfaces** for next-gen phone tree systems.
+=======
+Developed by Bijan Ardalan — a modular, AI-first IVR framework for modern voice interfaces.
+
