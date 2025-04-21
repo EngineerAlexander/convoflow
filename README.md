@@ -56,7 +56,7 @@ docker-compose up -d
 - PostgreSQL will store session logs.
 - Neo4j will manage the conversational graph.
 
-To tear down the containers after running:
+To tear down the containers after running later:
 
 ```bash
 docker-compose down -v
@@ -64,48 +64,48 @@ docker-compose down -v
 
 ---
 
-### 4. Choose a Runtime Mode
+### 4. Run Configuration Scripts
+
+You can inspect and build your graph or verify database connectivity using helper scripts in the `scripts/` directory:
+
+```bash
+scripts/
+├── check_db_connections.py   # Verify Neo4j and PostgreSQL connections
+├── initialize_db.py      # Initialize the Neo4j graph db with convoflow library
+├── visualize_graph.py  # Generate HTML visualization of the Neo4j graph
+```
+
+---
+
+### 5. Choose a Runtime Mode
 
 Run one of the example scripts:
 
 #### Text-Only (CLI):
 
 ```bash
-python examples/example1.py
+python examples/dev_cli_example.py
 ```
 
 #### Voice-Enabled Mode:
 
 ```bash
-python examples/example2.py
-```
-
----
-
-## Graph & DB Management
-
-You can inspect and build your graph or verify database connectivity using helper scripts in the `scripts/` directory:
-
-```bash
-scripts/
-├── init_graph.py       # Build graph structure in Neo4j
-├── check_postgres.py   # Verify PostgreSQL connection
-├── check_neo4j.py      # Verify Neo4j connection
-├── visualize_graph.py  # Generate HTML visualization of the Neo4j graph
+python examples/example.py
 ```
 
 ---
 
 ## Visuals
 
-See `media/` for screenshots and running examples of ConvoFlow:
+Here are some pictures from the use of ConvoFlow:
 
-```
-media/
-├── demo_cli.png
-├── demo_voice.png
-├── graph_viz.png
-```
+**Node During Voice Mode:**
+
+![Voice Demo](media/tts-example-at-node.png)
+
+**Visualization of Graph to Traverse Through:**
+
+![Instantiated Graph](media/graph-visualization.png)
 
 ---
 
@@ -113,34 +113,16 @@ media/
 
 ```
 convoflow/
-├── ai/              # Models and LLM routing logic
-├── core/            # Graph logic and runner
-├── io/              # STT (speech-to-text) + TTS (text-to-speech)
-├── db/              # PostgreSQL + Neo4j interaction
-├── examples/        # CLI and voice runner scripts
-├── scripts/         # Helper scripts for graph and DB
-├── tests/           # Unit tests
-├── media/           # Screenshots and visualizations
+├── ai/              # Model for zero-shot classification. Note LLM would have also worked
+├── core/            # Runners for both modes of app
+├── data/            # Graph abstraction
+├── io/              # STT (speech-to-text) and TTS (text-to-speech)
+├── db/              # PostgreSQL definitions for metrics logging
+├── examples/        # CLI and voice runner scripts being used in-action
+├── scripts/         # Helper scripts for graph and DBs
 ├── pyproject.toml   # Project dependencies and config
 ├── .env             # Environment variable definitions
 ```
-
----
-
-## Testing
-
-Run tests with:
-
-```bash
-pytest
-```
-
-Tests include:
-
-- Graph traversal logic
-- LangChain + BART zero-shot classification
-- Database logging
-- Mocked speech-to-text and text-to-speech pipelines
 
 ---
 
