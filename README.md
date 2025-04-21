@@ -41,7 +41,7 @@ brew install portaudio
 
 ### 2. Set Environment Variables
 
-Ensure your `.env` file contains the correct credentials and matches the values in `docker-compose.yml`.
+Ensure you create a `.env` file that contains the correct credentials and matches the values in `docker-compose.yml`. a `.env.example` file has been given as a guide.
 
 ---
 
