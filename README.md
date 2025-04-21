@@ -1,155 +1,162 @@
 # ConvoFlow
 
-**ConvoFlow** is a modular, AI-powered framework for building intelligent, conversational phone trees (IVR systems). It uses a graph-based design and integrates offline-friendly voice recognition, speech synthesis, and local language models like [Gemma](https://ollama.com/library/gemma) via [Ollama](https://ollama.com/). It is fully testable, supports logging of user journeys, and is great for rapid prototyping or production-ready flows.
+**ConvoFlow** is a modular, AI-powered framework for building intelligent, conversational phone trees (IVR systems). It uses a graph-based design, supports voice interfaces and text interfaces, and integrates advanced models like Whisper and BART to enable natural and scalable conversational automation. ConvoFlow is designed for both rapid prototyping and production deployment.
 
 ---
 
 ## Features
 
 - **Graph-based flow system**: Model your IVR routes using nodes and transitions.
-- **Local LLM integration**: Route conversations using models like `gemma:7b` via LangChain + Ollama.
-- **Voice input + speech output**: Leverages Hugging Face for speech-to-text and Coqui TTS for responses.
-- **Back navigation**: Users can say "go back" at any point to return to the previous node.
-- **CLI dev mode**: Rapidly test your flows without audio using a terminal interface.
-- **Analytics logging**: Logs the user’s journey through the call graph into an SQLite database.
+- **Database-backed**: Uses PostgreSQL and Neo4j (via Docker) to manage session logs and graph structures.
+- **Zero-shot classification**: Uses `facebook/bart-large-mnli` to understand and route user intent.
+- **Voice input + output**:
+  - Transcription via `openai/whisper-large-v3`
+  - Text-to-speech via `microsoft/speecht5_tts` + vocoder `microsoft/speecht5_hifigan`
+  - Speaker embeddings via `Matthijs/cmu-arctic-xvectors`
+- **CLI dev mode**: Test call flows quickly with just text.
+- **Speech-enabled runtime**: Interact with your call flows through your microphone and speakers.
+- **Back navigation**: Say "go back" to return to the previous node.
+- **Logging & analytics**: Logs user journeys and decisions through the graph into PostgreSQL.
+- **Testable and modular**: Fully structured to support unit testing and scalable deployment.
+- **Designed for parallelization**: Databases are split by type to enable multiple call sessions running concurrently on a server.
 
 ---
 
 ## Installation
 
-### 1. Clone and Setup
+### 1. Clone and Setup Environment
 
 ```bash
-git clone https://github.com/yourusername/convoflow.git
+git clone https://github.com/EngineerAlexander/convoflow.git
 cd convoflow
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install .
 ```
 
-### 2. Install Ollama & Download a Model
+> **Optional:** If using microphone/speaker features on macOS, install PortAudio system dependency:
+```bash
+brew install portaudio
+```
 
-ConvoFlow uses **Ollama** to run LLMs locally. Install it:
+### 2. Set Environment Variables
+
+Ensure your `.env` file contains the correct credentials and matches the values in `docker-compose.yml`.
+
+---
+
+## Running the App
+
+### 3. Spin Up Databases (PostgreSQL + Neo4j)
 
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama pull gemma:7b
+docker-compose up -d
+```
+
+- PostgreSQL will store session logs.
+- Neo4j will manage the conversational graph.
+
+To tear down the containers after running:
+
+```bash
+docker-compose down -v
 ```
 
 ---
 
-## Quick Start
+### 4. Choose a Runtime Mode
 
-Run the sample CLI IVR flow (text-only mode):
+Run one of the example scripts:
+
+#### Text-Only (CLI):
 
 ```bash
-python examples/dev_cli.py
+python examples/example1.py
 ```
 
-This will simulate an IVR interaction in your terminal using LangChain + a local Gemma model.
+#### Voice-Enabled Mode:
 
-You’ll see prompts like:
+```bash
+python examples/example2.py
 ```
-[START]: Welcome. Say billing, support, or hours.
-You: billing
-[BILLING]: Would you like your balance or to make a payment?
-```
-
-Say "go back" at any point to return to the previous prompt.
 
 ---
 
-## Running Voice-Enabled IVR (Coming Soon)
+## Graph & DB Management
 
-Voice input and TTS runner will use:
-- `sounddevice` for microphone input
-- Hugging Face Wav2Vec2 for transcription
-- Coqui TTS for responses
+You can inspect and build your graph or verify database connectivity using helper scripts in the `scripts/` directory:
 
-You can begin integrating this with the `convoflow/core/runner.py` class.
+```bash
+scripts/
+├── init_graph.py       # Build graph structure in Neo4j
+├── check_postgres.py   # Verify PostgreSQL connection
+├── check_neo4j.py      # Verify Neo4j connection
+├── visualize_graph.py  # Generate HTML visualization of the Neo4j graph
+```
 
 ---
 
-## Logging & Analytics
+## Visuals
 
-Each session is logged into a local **SQLite database (`convoflow.db`)**. Tracked data includes:
+See `media/` for screenshots and running examples of ConvoFlow:
 
-- Session start and end times
-- Node IDs visited
-- User input at each step
-- Full traversal path
-
-You can inspect it via:
-
-```bash
-sqlite3 convoflow.db
+```
+media/
+├── demo_cli.png
+├── demo_voice.png
+├── graph_viz.png
 ```
 
-or using `sqlite-utils`:
+---
 
-```bash
-sqlite-utils tables convoflow.db
-sqlite-utils rows convoflow.db routes
+## Project Structure
+
+```
+convoflow/
+├── ai/              # Models and LLM routing logic
+├── core/            # Graph logic and runner
+├── io/              # STT (speech-to-text) + TTS (text-to-speech)
+├── db/              # PostgreSQL + Neo4j interaction
+├── examples/        # CLI and voice runner scripts
+├── scripts/         # Helper scripts for graph and DB
+├── tests/           # Unit tests
+├── media/           # Screenshots and visualizations
+├── pyproject.toml   # Project dependencies and config
+├── .env             # Environment variable definitions
 ```
 
 ---
 
 ## Testing
 
-ConvoFlow includes a test suite under `/tests`.
-
-To run all tests:
+Run tests with:
 
 ```bash
 pytest
 ```
 
-You can test:
+Tests include:
 
-- Graph building
-- LangChain routing logic
-- Voice transcription (mocked)
-- Session logging to DB
-
----
-
-## Directory Overview
-
-```
-convoflow/
-│
-├── convoflow/
-│   ├── core/             # Graph + runner logic
-│   ├── ai/               # LLM via LangChain
-│   ├── io/               # STT and TTS handling
-│   └── db/               # Logging to SQLite
-│
-├── examples/             # CLI demo flow
-├── tests/                # Unit tests
-├── requirements.txt
-├── README.md
-└── pyproject.toml
-```
+- Graph traversal logic
+- LangChain + BART zero-shot classification
+- Database logging
+- Mocked speech-to-text and text-to-speech pipelines
 
 ---
 
-## Requirements
+## Models Used
 
-See [`requirements.txt`](./requirements.txt) for all dependencies. Key ones include:
-
-- `langchain`, `langchain-community` – for LLM abstraction
-- `ollama` – run local LLMs like Gemma
-- `transformers`, `torchaudio`, `TTS` – for speech processing
-- `pytest` – for testing
-
----
-
-## License
-
-MIT License
-
----
+- **Zero-shot classification**: `facebook/bart-large-mnli`
+- **Speech-to-text**: `openai/whisper-large-v3`
+- **Text-to-speech**: `microsoft/speecht5_tts`
+- **Vocoder**: `microsoft/speecht5_hifigan`
+- **Speaker Embeddings**: `Matthijs/cmu-arctic-xvectors`
 
 ## Author
 
+Developed by Bijan Ardalan — an AI-first IVR framework for voice-driven applications and conversational automation.
+
+ConvoFlow supports both **terminal-based interaction** and **real-time audio interfaces** for next-gen phone tree systems.
+=======
 Developed by Bijan Ardalan — a modular, AI-first IVR framework for modern voice interfaces.
+

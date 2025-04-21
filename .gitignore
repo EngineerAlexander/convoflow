@@ -5,6 +5,9 @@ postgres_data/
 graph_visualization.html
 temp_input.wav
 
+# macOS
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -179,6 +182,3 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-
-# macOS
-.DS_Store
