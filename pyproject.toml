@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "convoflow"
+version = "1.0.0"
+requires-python = ">=3.8"
+dependencies = [
+    # Easy environment loading
+    "python-dotenv>=1.0.0",
+
+    # Voice model support
+    "transformers>=4.39",
+    "torchaudio>=2.2.0",
+    "torch>=2.2.0",
+    "datasets>=2.18.0",
+    "sentencepiece>=0.2.0",
+    "accelerate>=0.29.0",
+
+    # Audio I/O
+    "sounddevice>=0.4.6",
+    "speechrecognition>=3.10.0",
+    "PyAudio>=0.2.14",
+
+    # Graph Database
+    "neo4j>=5.19.0",
+    "pyvis>=0.3.0",
+
+    # SQL Database (PostgreSQL)
+    "psycopg2-binary>=2.9.9",
+]
+
+# Tell setuptools to explicitly find packages only in the 'convoflow' directory
+[tool.setuptools.packages.find]
+where = ["convoflow"]
+
+[project.urls]
+Homepage = "https://github.com/EngineerAlexander/convoflow"
