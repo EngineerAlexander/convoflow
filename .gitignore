@@ -1,3 +1,14 @@
+# Project folders and files
+neo4j_data/
+postgres_data/
+
+graph_visualization.html
+temp_input.wav
+
+# macOS
+.DS_Store
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
